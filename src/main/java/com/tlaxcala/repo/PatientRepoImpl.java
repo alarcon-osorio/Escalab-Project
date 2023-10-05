@@ -1,4 +1,4 @@
-package com.tlaxcala.repo;
+/*package com.tlaxcala.repo;
 
 import org.springframework.stereotype.Repository;
 
@@ -11,4 +11,4 @@ public class PatientRepoImpl implements IPatientRepo {
     public String sayHello(Patient patient) {
         return "Hi " + patient.getFirstName(); 
     }
-}
+}*/
