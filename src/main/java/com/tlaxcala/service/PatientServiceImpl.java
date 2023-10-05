@@ -1,5 +1,7 @@
 package com.tlaxcala.service;
 
+import java.util.List;
+
 //import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,34 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class PatientServiceImpl implements IPatientService {
+
+    private final IPatientRepo repo;
+
+    @Override
+    public Patient save(Patient patient) {
+        return repo.save(patient);
+    }
+
+    @Override
+    public Patient update(Patient patient, Integer id) {
+        patient.setIdPatient(id);
+        return repo.save(patient);
+    }
+
+    @Override
+    public List<Patient> findAll() {
+        return repo.findAll();
+    }
+
+    @Override
+    public Patient findById(Integer id) {
+        return repo.findById(id).orElse(new Patient());
+    }
+
+    @Override
+    public void delete(Integer id) {
+        repo.deleteById(id);
+    }
 
     // forma 1: private PatientRepo repo = new PatientRepo();
     // forma 2: private PatientRepoImpl repo = new PatientRepoImpl();
@@ -28,7 +58,7 @@ public class PatientServiceImpl implements IPatientService {
     /*@Autowired
     private IPatientRepo repo;*/
     // forma 6: utilizar como inyección una interfaz + una anotación
-    private final IPatientRepo repo;
+    /*private final IPatientRepo repo;
 
     public String sayHelloLogic(Patient patient) {
         if (patient != null) {
@@ -36,5 +66,5 @@ public class PatientServiceImpl implements IPatientService {
         } else {
             return "There is no patient";
         }
-    }
+    }*/
 }
