@@ -4,9 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.tlaxcala.model.Patient;
 
-//import com.tlaxcala.model.Patient;
+/*public interface IPatientRepo extends JpaRepository<Patient, Integer> {    
+}*/
 
-public interface IPatientRepo extends JpaRepository<Patient, Integer> {
-    
-    //String sayHello(Patient patient);
-}
+public interface IPatientRepo extends IGenericRepo<Patient, Integer> {}

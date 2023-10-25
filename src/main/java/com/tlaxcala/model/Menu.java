@@ -1,5 +1,7 @@
 package com.tlaxcala.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,5 +24,12 @@ public class Menu {
 
     @Column(nullable = false, length = 30)
     private String url;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "menu_role",
+        joinColumns = @JoinColumn(name = "id_menu", referencedColumnName = "idMenu"),
+        inverseJoinColumns = @JoinColumn(name = "id_role", referencedColumnName = "idRole")    
+    )
+    private List<Role> roles;
 
 }
