@@ -4,11 +4,10 @@ import java.util.List;
 
 import com.tlaxcala.model.Patient;
 
-public interface IPatientService {
+public interface IPatientService extends ICRUD<Patient, Integer> {
 
-    Patient save(Patient patient);
-    Patient update(Patient patient, Integer id);
-    List<Patient> findAll();
-    Patient findById(Integer id);
-    void delete(Integer id);
+   // DRY Principle: Don't repeat yourself! X
+   // method: obtenga los pacientes ingresados a la UCI
+   //List<Patient> getUCIPatients();
+
 }
