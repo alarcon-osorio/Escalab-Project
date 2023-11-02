@@ -7,4 +7,6 @@ import com.tlaxcala.model.Patient;
 /*public interface IPatientRepo extends JpaRepository<Patient, Integer> {    
 }*/
 
-public interface IPatientRepo extends IGenericRepo<Patient, Integer> {}
+public interface IPatientRepo extends IGenericRepo<Patient, Integer> {
+
+}
