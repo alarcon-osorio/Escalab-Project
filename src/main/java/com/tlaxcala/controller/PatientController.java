@@ -17,10 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.tlaxcala.dto.PatientDTO;
-import com.tlaxcala.dto.PatientRecord;
+//import com.tlaxcala.dto.PatientRecord;
 import com.tlaxcala.model.Patient;
 import com.tlaxcala.service.IPatientService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -33,6 +34,10 @@ public class PatientController {
 
     private PatientDTO convertToDto(Patient obj) {
         return mapper.map(obj, PatientDTO.class);
+    }
+
+    private Patient convertToEntity(PatientDTO dto) {
+        return mapper.map(dto, Patient.class);
     }
 
     @GetMapping
@@ -66,21 +71,21 @@ public class PatientController {
     }
 
     @PostMapping
-    public ResponseEntity<Patient> save(@RequestBody Patient patient) {
-        Patient obj = service.save(patient);
+    public ResponseEntity<PatientDTO> save(@Valid @RequestBody PatientDTO dto) {
+        Patient obj = service.save(convertToEntity(dto));
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdPatient()).toUri();
-        return ResponseEntity.created(location).body(obj);
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Patient> findById(@PathVariable("id") Integer id) {
+    public ResponseEntity<PatientDTO> findById(@PathVariable("id") Integer id) {
         Patient obj = service.findById(id);
-        return new ResponseEntity<>(obj, HttpStatus.OK);
+        return new ResponseEntity<>(convertToDto(obj), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> update(@PathVariable("id") Integer id, @RequestBody Patient patient) {
-        Patient obj = service.update(patient, id);
+    public ResponseEntity<Patient> update(@PathVariable("id") Integer id, @RequestBody PatientDTO dto) {
+        Patient obj = service.update(convertToEntity(dto), id);
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }
 
