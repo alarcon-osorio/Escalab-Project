@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class PatientController {
 
     private final IPatientService service;
+
+    @Qualifier("defaultMapper")
     private final ModelMapper mapper;
 
     private PatientDTO convertToDto(Patient obj) {

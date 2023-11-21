@@ -30,6 +30,9 @@ public class Consult {
     @JoinColumn(name = "id_specialty", nullable = false, foreignKey = @ForeignKey(name = "FK_CONSULT_SPECIALTY"))
     private Specialty specialty;
 
+    @Column(nullable = false)
+    private String numConsult;
+
     @OneToMany(mappedBy = "consult", cascade = CascadeType.ALL, orphanRemoval = true) // fetchType.LAZY
     private List<ConsultDetail> details;
 

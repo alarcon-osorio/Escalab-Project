@@ -1,6 +1,6 @@
 package com.tlaxcala.repo;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+//import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.tlaxcala.model.Patient;
 

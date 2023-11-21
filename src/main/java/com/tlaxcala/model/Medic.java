@@ -13,7 +13,7 @@ public class Medic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Integer id;
+    private Integer idMedic;
 
     @Column(nullable = false, length = 70)
     private String firstName;
