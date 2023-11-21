@@ -39,12 +39,14 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-            HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        // te devuelve una lista de errores para transformar cada elemento de lista capturando el campo que generó el error
         String msg = ex.getBindingResult().getFieldErrors().stream().map(
-                e -> e.getField().concat(":").concat(e.getDefaultMessage().concat(" "))).collect(Collectors.joining());
+                e -> e.getField().concat(":").concat(e.getDefaultMessage().concat(" "))
+        ).collect(Collectors.joining()); // permite agrupar todas las iteraciones
+
         CustomErrorResponse err = new CustomErrorResponse(LocalDateTime.now(), msg, request.getDescription(false));
-        return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
+        return  new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
     }
 
     // Alternativa 2: desde Spring Boot 3
@@ -76,5 +78,4 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
      * .build();
      * }
      */
-
 }

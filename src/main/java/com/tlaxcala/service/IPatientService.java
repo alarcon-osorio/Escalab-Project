@@ -1,6 +1,6 @@
 package com.tlaxcala.service;
 
-import java.util.List;
+//import java.util.List;
 
 import com.tlaxcala.model.Patient;
 

@@ -19,10 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.tlaxcala.dto.MedicDTO;
-//import com.tlaxcala.dto.MedicRecord;
-import com.tlaxcala.model.Medic;
-import com.tlaxcala.service.IMedicService;
+import com.tlaxcala.dto.SpecialtyDTO;
+import com.tlaxcala.model.Specialty;
+import com.tlaxcala.service.ISpecialtyService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,39 +30,39 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/medics")
+@RequestMapping("/specialties")
 @RequiredArgsConstructor
-public class MedicController {
+public class SpecialtyController {
 
-    private final IMedicService service;
+    private final ISpecialtyService service;
 
-    @Qualifier("medicMapper")
+    @Qualifier("defaultMapper")
     private final ModelMapper mapper;
 
-    private MedicDTO convertToDto(Medic obj) {
-        return mapper.map(obj, MedicDTO.class);
+    private SpecialtyDTO convertToDto(Specialty obj) {
+        return mapper.map(obj, SpecialtyDTO.class);
     }
 
-    private Medic convertToEntity(MedicDTO dto) {
-        return mapper.map(dto, Medic.class);
+    private Specialty convertToEntity(SpecialtyDTO dto) {
+        return mapper.map(dto, Specialty.class);
     }
 
     @GetMapping
-    public ResponseEntity<List<MedicDTO>> findAll() {
+    public ResponseEntity<List<SpecialtyDTO>> findAll() {
         // podemos ocupar el api de programación funcional para el manejo de listas
         // mediante
         // la propiedad stream
         // cuando se hace referencia de un método dentro de un lambda yo puedo aplicar
         // una abreviación
-        // List<MedicDTO> listExample = service.findAll().stream().map(e ->
+        // List<SpecialtyDTO> listExample = service.findAll().stream().map(e ->
         // convertToDto(e)).toList();
-        List<MedicDTO> list = service.findAll().stream().map(this::convertToDto).toList();
-        // List<MedicDTO> list = service.findAll().stream().map(e ->
+        List<SpecialtyDTO> list = service.findAll().stream().map(this::convertToDto).toList();
+        // List<SpecialtyDTO> list = service.findAll().stream().map(e ->
         /*
-         * List<MedicRecord> list = service.findAll()
+         * List<SpecialtyRecord> list = service.findAll()
          * .stream().
          * map(e ->
-         * new MedicRecord(e.getIdMedic(), e.getFirstName(), e.getLastName(),
+         * new SpecialtyRecord(e.getIdSpecialty(), e.getFirstName(), e.getLastName(),
          * e.getDni(),
          * e.getAddress(), e.getPhone(), e.getEmail())
          * ).toList();
@@ -71,8 +70,8 @@ public class MedicController {
         /*
          * {
          * 
-         * MedicDTO dto = new MedicDTO();
-         * dto.setIdMedic(e.getIdMedic());
+         * SpecialtyDTO dto = new SpecialtyDTO();
+         * dto.setIdSpecialty(e.getIdSpecialty());
          * dto.setFirstName(e.getFirstName());
          * dto.setLastName(e.getLastName());
          * dto.setDni(e.getDni());
@@ -87,42 +86,43 @@ public class MedicController {
     }
 
     @PostMapping
-    public ResponseEntity<MedicDTO> save(@Valid @RequestBody MedicDTO dto) {
-        Medic obj = service.save(convertToEntity(dto));
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdMedic())
+    public ResponseEntity<SpecialtyDTO> save(@Valid @RequestBody SpecialtyDTO dto) {
+        Specialty obj = service.save(convertToEntity(dto));
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdSpecialty())
                 .toUri();
         return ResponseEntity.created(location).build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MedicDTO> findById(@PathVariable("id") Integer id) {
-        Medic obj = service.findById(id);
+    public ResponseEntity<SpecialtyDTO> findById(@PathVariable("id") Integer id) {
+        Specialty obj = service.findById(id);
         return new ResponseEntity<>(convertToDto(obj), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Medic> update(@PathVariable("id") Integer id, @RequestBody MedicDTO dto) {
-        Medic obj = service.update(convertToEntity(dto), id);
+    public ResponseEntity<Specialty> update(@PathVariable("id") Integer id, @RequestBody SpecialtyDTO dto) {
+        Specialty obj = service.update(convertToEntity(dto), id);
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Medic> delete(@PathVariable("id") Integer id) {
+    public ResponseEntity<Specialty> delete(@PathVariable("id") Integer id) {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     // hateoas -> para tipo get
     @GetMapping("/hateoas/{id}")
-    public EntityModel<MedicDTO> findByHateoas(@PathVariable("id") Integer id) {
-        EntityModel<MedicDTO> resource = EntityModel.of(convertToDto(service.findById(id))); // la salida
+    public EntityModel<SpecialtyDTO> findByHateoas(@PathVariable("id") Integer id) {
+        EntityModel<SpecialtyDTO> resource = EntityModel.of(convertToDto(service.findById(id))); // la salida
 
         WebMvcLinkBuilder link1 = linkTo(methodOn(this.getClass()).findById(id)); // la generación del link
 
-        resource.add(link1.withRel("medic-info1")); // agregamos el link con una llave
-        resource.add(link1.withRel("medic-info2"));
+        resource.add(link1.withRel("specialty-info1")); // agregamos el link con una llave
+        resource.add(link1.withRel("specialty-info2"));
 
         return resource;
     }
 
 }
+
