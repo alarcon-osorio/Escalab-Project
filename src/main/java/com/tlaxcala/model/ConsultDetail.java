@@ -1,12 +1,15 @@
 package com.tlaxcala.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 public class ConsultDetail {
 
@@ -24,5 +27,4 @@ public class ConsultDetail {
 
     @Column(nullable = false, length = 300)
     private String treatment;
-    
 }

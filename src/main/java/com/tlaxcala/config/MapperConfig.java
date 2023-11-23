@@ -41,4 +41,15 @@ public class MapperConfig {
         return mapper;
 
     }
+
+    /*@Bean("consultMapper")
+    public ModelMapper consultMapper() {
+        ModelMapper mapper = new ModelMapper();
+
+        // Escritura
+        TypeMap<ConsultDTO, Consult> typeMap1 = mapper.createTypeMap(ConsultDTO.class, Consult.class);
+
+        return mapper;
+
+    }*/
 }
