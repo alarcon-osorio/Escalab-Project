@@ -100,7 +100,7 @@ public class ExamController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Exam> update(@PathVariable("id") Integer id, @RequestBody ExamDTO dto) {
+    public ResponseEntity<Exam> update(@PathVariable("id") Integer id, @RequestBody ExamDTO dto) throws Exception {
         Exam obj = service.update(convertToEntity(dto), id);
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }

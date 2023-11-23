@@ -101,7 +101,7 @@ public class PatientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> update(@PathVariable("id") Integer id, @RequestBody PatientDTO dto) {
+    public ResponseEntity<Patient> update(@PathVariable("id") Integer id, @RequestBody PatientDTO dto) throws Exception {
         Patient obj = service.update(convertToEntity(dto), id);
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }

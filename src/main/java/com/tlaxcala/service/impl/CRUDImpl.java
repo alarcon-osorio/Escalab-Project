@@ -1,5 +1,6 @@
 package com.tlaxcala.service.impl;
 
+import java.lang.reflect.Method;
 import java.util.List;
 // import java.util.function.Supplier;
 
@@ -17,7 +18,15 @@ public abstract class CRUDImpl<T, ID> implements ICRUD<T, ID> {
     }
 
     @Override
-    public T update(T t, ID id) {
+    public T update(T t, ID id) throws Exception {
+        // API JAVA: REFLEXION
+        Class<?> classType = t.getClass();
+        String className = t.getClass().getSimpleName();
+        String methodName = "setId" + className;
+        Method setIdMethod = classType.getMethod(methodName, id.getClass());
+        setIdMethod.invoke(t, id);
+
+        getRepo().findById(id).orElseThrow(()-> new ModelNotFoundException("ID NOT FOUND" + id));
         return getRepo().save(t);
     }
 
@@ -34,6 +43,7 @@ public abstract class CRUDImpl<T, ID> implements ICRUD<T, ID> {
 
     @Override
     public void delete(ID id) {
+        getRepo().findById(id).orElseThrow(()-> new ModelNotFoundException("ID NOT FOUND" + id));
         getRepo().deleteById(id);
     }
     
