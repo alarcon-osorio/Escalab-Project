@@ -19,6 +19,10 @@ public class ConsultExam {
 
     @Id
     private Exam exam;
+
+    /*public ConsultExam() {
+
+    }*/
 }
 
 
