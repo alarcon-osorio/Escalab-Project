@@ -1,6 +1,7 @@
 package com.tlaxcala.controller;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -17,11 +18,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.tlaxcala.dto.ConsultDTO;
 import com.tlaxcala.dto.ConsultListExamDTO;
+import com.tlaxcala.dto.FilterConsultDTO;
 import com.tlaxcala.model.Consult;
 import com.tlaxcala.model.Exam;
 import com.tlaxcala.service.IConsultService;
@@ -134,5 +137,28 @@ public class ConsultController {
 
         return resource;
     }
+
+    @PostMapping("/search/others")
+    public ResponseEntity<List<ConsultDTO>> searchByOthers(@RequestBody FilterConsultDTO filterDTO) {
+        List<Consult> consults = service.search(filterDTO.getDni(), filterDTO.getFullname());
+
+        //List<ConsultDTO> consultDTOS = consults.stream().map(e-> mapper.map(e, ConsultDTO.class)).toList();
+        List<ConsultDTO> consultDTOs = mapper.map(consults, new TypeToken<List<ConsultDTO>>(){}.getType());
+
+        return new ResponseEntity<>(consultDTOs, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/search/date")
+    public ResponseEntity<List<ConsultDTO>> searchByDates(
+        @RequestParam(value = "date1", defaultValue = "2023-09-28", required = true) String date1,
+        @RequestParam(value = "date2") String date2)
+    {
+        List<Consult> consults = service.searchByDates(LocalDateTime.parse(date1), LocalDateTime.parse(date2));
+        List<ConsultDTO> consultDTOs = mapper.map(consults, new TypeToken<List<ConsultDTO>>(){}.getType());
+
+        return new ResponseEntity<>(consultDTOs, HttpStatus.OK);
+    }
+
 
 }

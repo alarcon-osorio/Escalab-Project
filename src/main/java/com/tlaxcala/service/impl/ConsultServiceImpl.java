@@ -1,5 +1,6 @@
 package com.tlaxcala.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -35,6 +36,17 @@ public class ConsultServiceImpl extends CRUDImpl<Consult, Integer> implements IC
         exams.forEach(ex -> ceRepo.saveExam(consult.getIdConsult(), ex.getIdExam()));
 
         return consult;
+    }
+
+    @Override
+    public List<Consult> search(String dni, String fullname) {
+        return consultRepo.search(dni, fullname);
+    }
+
+    @Override
+    public List<Consult> searchByDates(LocalDateTime date1, LocalDateTime date2) {
+       final int OFFSET_DAYS = 1;
+       return consultRepo.searchByDates(date1, date2.plusDays(OFFSET_DAYS));
     }
 
 }
