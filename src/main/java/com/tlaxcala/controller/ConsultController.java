@@ -24,7 +24,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.tlaxcala.dto.ConsultDTO;
 import com.tlaxcala.dto.ConsultListExamDTO;
+import com.tlaxcala.dto.ConsultProcDTO;
 import com.tlaxcala.dto.FilterConsultDTO;
+import com.tlaxcala.dto.IConsultProcDTO;
 import com.tlaxcala.model.Consult;
 import com.tlaxcala.model.Exam;
 import com.tlaxcala.service.IConsultService;
@@ -160,5 +162,16 @@ public class ConsultController {
         return new ResponseEntity<>(consultDTOs, HttpStatus.OK);
     }
 
+    @GetMapping("/callProcedureNative")
+    public ResponseEntity<List<ConsultProcDTO>> callProcedureOrFunctionNative() {
+        List<ConsultProcDTO> consults = service.callProcedureOrFunctionNative();
+        return new ResponseEntity<>(consults, HttpStatus.OK);
+    }
+
+    @GetMapping("/callProcedureProjection")
+    public ResponseEntity<List<IConsultProcDTO>> callProcedureOrFunctionProjection() {
+        List<IConsultProcDTO> consults = service.callProcedureOrFunctionProjection();
+        return new ResponseEntity<>(consults, HttpStatus.OK);
+    }
 
 }

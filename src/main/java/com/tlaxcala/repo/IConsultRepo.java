@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.tlaxcala.dto.IConsultProcDTO;
 import com.tlaxcala.model.Consult;
 
 public interface IConsultRepo extends IGenericRepo<Consult, Integer> { 
@@ -26,6 +27,10 @@ public interface IConsultRepo extends IGenericRepo<Consult, Integer> {
     @Query("FROM Consult c WHERE c.consultDate BETWEEN :date1 AND :date2")
     List<Consult> searchByDates(@Param("date1") LocalDateTime date1, @Param("date2") LocalDateTime date2);
     
-    //List<Object[]> callProcedureOrFunctionNative();
-    //List<IConsultProcDTO> callProcedureOrFunctionProjection();
+    // spring con la definición 1: trabaja los resultados como un array de objetos
+    @Query(value = "select * from fn_list()", nativeQuery = true)
+    List<Object[]> callProcedureOrFunctionNative();
+
+    @Query(value = "select * from fn_list()", nativeQuery = true)
+    List<IConsultProcDTO> callProcedureOrFunctionProjection();
 }
