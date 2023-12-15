@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -172,6 +173,14 @@ public class ConsultController {
     public ResponseEntity<List<IConsultProcDTO>> callProcedureOrFunctionProjection() {
         List<IConsultProcDTO> consults = service.callProcedureOrFunctionProjection();
         return new ResponseEntity<>(consults, HttpStatus.OK);
+    }
+
+    // forma 1: es mantenerlo como binario
+    // forma 2: devolverlo procesado en el formato al cliente
+    @GetMapping(value = "/generateReport", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> generateReport() throws Exception {
+        byte[] data = service.generateReport();
+        return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
 }
