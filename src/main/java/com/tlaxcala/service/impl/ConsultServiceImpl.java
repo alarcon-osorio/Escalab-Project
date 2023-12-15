@@ -1,9 +1,13 @@
 package com.tlaxcala.service.impl;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import com.tlaxcala.dto.ConsultProcDTO;
@@ -17,6 +21,10 @@ import com.tlaxcala.service.IConsultService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 @RequiredArgsConstructor
@@ -79,8 +87,16 @@ public class ConsultServiceImpl extends CRUDImpl<Consult, Integer> implements IC
 
     @Override
     public byte[] generateReport() throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'generateReport'");
+        byte[] data = null;
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("txt_title", "Report Title");
+
+        File file = new ClassPathResource("/reports/consultas.jasper").getFile();
+        JasperPrint print = JasperFillManager.fillReport(file.getPath(), parameters, new JRBeanCollectionDataSource(callProcedureOrFunctionNative()));
+        data = JasperExportManager.exportReportToPdf(print);
+
+        return data;
+        
     }
 
 }
