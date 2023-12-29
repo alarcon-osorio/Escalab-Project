@@ -1,9 +1,14 @@
 package com.tlaxcala.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
+//import java.util.Map;
 
+//import org.cloudinary.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,8 +26,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+//import com.cloudinary.Cloudinary;
+//import com.cloudinary.utils.ObjectUtils;
 import com.tlaxcala.dto.ConsultDTO;
 import com.tlaxcala.dto.ConsultListExamDTO;
 import com.tlaxcala.dto.ConsultProcDTO;
@@ -30,7 +38,9 @@ import com.tlaxcala.dto.FilterConsultDTO;
 import com.tlaxcala.dto.IConsultProcDTO;
 import com.tlaxcala.model.Consult;
 import com.tlaxcala.model.Exam;
+import com.tlaxcala.model.MediaFile;
 import com.tlaxcala.service.IConsultService;
+import com.tlaxcala.service.IMediaFileService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +54,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class ConsultController {
 
     private final IConsultService service;
+    private final IMediaFileService mfService;
+    //private final Cloudinary cloudinary;
 
     @Qualifier("defaultMapper")
     private final ModelMapper mapper;
@@ -177,10 +189,51 @@ public class ConsultController {
 
     // forma 1: es mantenerlo como binario
     // forma 2: devolverlo procesado en el formato al cliente
-    @GetMapping(value = "/generateReport", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(value = "/generateReport", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> generateReport() throws Exception {
         byte[] data = service.generateReport();
         return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
+    // forma 1: recuperar el archivo y guardarlo en bdd tal cual, se guardaría la imagen completa
+    // forma 2: recuperar el archivo pero desde un repo externo como un path
+    @PostMapping(value = "/saveFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> saveFile(@RequestParam("file") MultipartFile file) throws Exception {
+
+        // forma 1: adecuada solo para apps muy pequeñas o de nicho donde el core de la app no sea la subida de archivos
+        MediaFile mf = new MediaFile();
+        mf.setFileType(file.getContentType()); // recuperar el tipo del archivo
+        mf.setFilename(file.getOriginalFilename()); // recuperar el nombre del archivo
+        mf.setValue(file.getBytes()); // arreglo de bytes con el recurso
+
+        mfService.save(mf);
+
+        /*// forma 2 (repositorio externo): gestionarlo desde un repositorio externo para el tema del escalado y el performance
+        File f = this.convertToFile(file); // convertir un multipart a file
+        Map response = cloudinary.uploader().upload(f, ObjectUtils.asMap("resource_type", "auto"));
+        JSONObject json = new JSONObject(response); // recurso recuperado en JSON
+        String url = json.getString("url"); // devuelve la url del path desde cloudinary
+
+        // mfService.update(url); // servicio que recupera la url de cloudinary y lo guarda en bdd*/
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/readFile/{idFile}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> readFile(@PathVariable("idFile") Integer idFile) throws IOException {
+
+        byte[] arr = mfService.findById(idFile).getValue();
+
+        return new ResponseEntity<>(arr, HttpStatus.OK);
+    }
+
+    // método utilitario
+    public File convertToFile(MultipartFile multipartFile) throws Exception {
+        File file = new File(multipartFile.getOriginalFilename()); // obtenemos el nombre
+        FileOutputStream outputStream = new FileOutputStream(file); // creamos un flujo para el file
+        outputStream.write(multipartFile.getBytes()); // recupero el file para la salida
+        outputStream.close();
+        return file;
     }
 
 }

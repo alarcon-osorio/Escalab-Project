@@ -72,7 +72,7 @@ public class ConsultServiceImpl extends CRUDImpl<Consult, Integer> implements IC
        consultRepo.callProcedureOrFunctionNative().forEach(e -> {
         ConsultProcDTO dto = new ConsultProcDTO();
         dto.setQuantity((Integer) e[0]);
-        dto.setConsultDate((String) e[1]);
+        dto.setConsultdate((String) e[1]);
 
         lst.add(dto);
        });
@@ -91,7 +91,7 @@ public class ConsultServiceImpl extends CRUDImpl<Consult, Integer> implements IC
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("txt_title", "Report Title");
 
-        File file = new ClassPathResource("/reports/consultas.jasper").getFile();
+        File file = new ClassPathResource("/reports/consults.jasper").getFile();
         JasperPrint print = JasperFillManager.fillReport(file.getPath(), parameters, new JRBeanCollectionDataSource(callProcedureOrFunctionNative()));
         data = JasperExportManager.exportReportToPdf(print);
 
