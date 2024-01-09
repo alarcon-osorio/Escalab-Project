@@ -1,5 +1,14 @@
 package com.tlaxcala.security;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.spec.SecretKeySpec;
 import java.io.Serializable;
 import java.security.Key;
 import java.util.Base64;
@@ -9,76 +18,67 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.crypto.spec.SecretKeySpec;
+@Component // es un estereotipo genérico que no calza con ninguno de los vistos: service, controller, repository, etc...
+public class JwtTokenUtil implements Serializable { // código java a jwt string especial
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+    //milisegundos
+    public final long JWT_TOKEN_VALIDITY = 5 * 60 * 60 * 1000; //5 horas de vigencia
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
-@Component // generic stereotype 
-public class JwtTokenUtil implements Serializable {
-
-    // mil.
-    public final long JWT_TOKEN_VALIDATY = 5 * 60 * 60 * 1000; // 5 hours
-
-    @Value("{jwt.secret}") // EL = Expression Language
+    @Value("${jwt.secret}")  //EL Expression Language -> clave para firmar el token
     private String secret;
 
-    public String generateToken(UserDetails userDetails) {
-        // definir que le quiers agregar al token
+    public String generateToken(UserDetails userDetails){
+        // defino que es lo que quiero proporcionar
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(",")));
-        claims.put("test", "txalcala-test-value");
+        claims.put("role", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","))); // el get authority te devulve uno o mas roles como una cadena de texto concatenada por ,
+        claims.put("test", "txalcala-test-value"); // credencial de prueba
 
-        return doGenerateToken(claims, userDetails.getUsername());
+        return doGenerateToken(claims, userDetails.getUsername()); // generamos el detalle con la info y el nombre del usuario (quien lo creo)
     }
 
     private String doGenerateToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder() // para comenzar a construirlo
-            .setClaims(claims) // info
-            .setSubject(subject) // user
-            .setIssuedAt(new Date(System.currentTimeMillis())) // fecha de creación
-            .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDATY)) // fecha de expiración
-            .signWith(getSigninKey()) // la llave secreta
-            .compact(); // devolver el token con las especificaciones con las cuales se creo
+        return Jwts.builder() // para construirlo
+                .setClaims(claims) // crendeciales
+                .setSubject(subject) // el usuario
+                .setIssuedAt(new Date(System.currentTimeMillis())) // fecha de creación
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY)) // fecha de expiración
+                .signWith(getSigningKey()) // la llave
+                .compact(); // devuelve la cadena del token
     }
 
-    private Key getSigninKey() { // creamos la llave secreta
-        return new SecretKeySpec(Base64.getDecoder().decode(secret), SignatureAlgorithm.HS512.getJcaName()); // la especificación de la llave o firma de tokens
+    private Key getSigningKey(){ // crea la llave de acuerdo a nuestra llave secreta
+        return new SecretKeySpec(Base64.getDecoder().decode(secret), SignatureAlgorithm.HS512.getJcaName()); // el secret debe codificarse en base 64
     }
 
-    // utils
-    public Claims getAllClaimsFromToken(String token) { // recopila el body/payload del token
-        return Jwts.parserBuilder().setSigningKey(getSigninKey()).build().parseClaimsJws(token).getBody();
+    //utils
+    public Claims getAllClaimsFromToken(String token){ // con este metodo estamos recuperando el contenido del token
+        return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
     }
 
-    // obtiene las credentials/claims en base al token
-    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = getAllClaimsFromToken(token);
-        return claimsResolver.apply(claims);
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver){ // devuelve cualquier tipo de dato
+        // esa function es una interfaz funcional que recibe lo que sea y devuelve lo que sea, recibe una solicitud para devolver un token
+        final Claims claims = getAllClaimsFromToken(token); // esto me devuelve el body el payload
+        return claimsResolver.apply(claims); // retorno el contenido resuleto de claims
     }
 
-    public String getUsernameFromToken(String token) { // obtenemos el usuario en base al token
-        return getClaimFromToken(token, Claims::getSubject);
+    public String getUsernameFromToken(String token){ // obtiene el usuario de las claims de acuerdo al token
+        return getClaimFromToken(token, Claims::getSubject); // e-> e.getSubject()),
     }
 
-    public Date getExpirationDateFromToken(String token) { // devuelve la fecha de expiración
+    public Date getExpirationDateFromToken(String token){ // obtengo la fecha de expiración del token
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    private boolean isTokenExpired(String token) { // saber si el token expiró o no
+    private boolean isTokenExpired(String token){ // para verificar si el token expiró
         final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
+        return expiration.before(new Date()); // la fecha de expiración está antes que la fecha actual
     }
 
-    public boolean validateToken(String token, UserDetails userDetails) { // para validar si el token pertenece a ese usuario y si está vigente en la sesión
+    public boolean validateToken(String token, UserDetails userDetails){
         final String username = getUsernameFromToken(token);
         return (username.equalsIgnoreCase(userDetails.getUsername()) && !isTokenExpired(token));
+        // pregunto si el token pertenece a la sesión del usuario en spring y si no ha expirado
     }
-    
+
 }
+
