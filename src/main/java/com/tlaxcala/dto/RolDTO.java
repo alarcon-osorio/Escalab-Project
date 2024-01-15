@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class RolDTO {
 
-    private Integer idRole;
+    private Integer idRol;
     private String name;
     private String description;
-    
 }
+

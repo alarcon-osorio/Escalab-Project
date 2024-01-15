@@ -1,7 +1,9 @@
 package com.tlaxcala.controller;
 
-import java.util.List;
-
+import com.tlaxcala.dto.MenuDTO;
+import com.tlaxcala.model.Menu;
+import com.tlaxcala.service.IMenuService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -10,11 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.tlaxcala.dto.MenuDTO;
-import com.tlaxcala.model.Menu;
-import com.tlaxcala.service.IMenuService;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @RestController
 @RequestMapping("/menus")
@@ -33,5 +32,4 @@ public class MenuController {
 
         return new ResponseEntity<>(menusDTO, HttpStatus.OK);
     }
-    
 }
