@@ -1,0 +1,5 @@
+zuul:
+  routes:
+    foos:
+      path: /foos/**
+      url: http://localhost:8089/spring-zuul-foos-resource/foos

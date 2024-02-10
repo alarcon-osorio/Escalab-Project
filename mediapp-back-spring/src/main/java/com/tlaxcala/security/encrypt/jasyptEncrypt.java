@@ -6,7 +6,7 @@ public class jasyptEncrypt {
         BasicTextEncryptor textEncryptor = new BasicTextEncryptor();
         textEncryptor.setPassword("tlaxcala");
 
-        String encryptedText = textEncryptor.encrypt("aEIu9S7cvZUnPJWezau3rKUCxj4BLtpCVzhVSyam93prJOxofs7688P0OD5tmTIsLL6u7G9HpXvT");
+        String encryptedText = textEncryptor.encrypt("tlaxcala");
         System.out.println("Encrypted Text: " + encryptedText);
     }
 }

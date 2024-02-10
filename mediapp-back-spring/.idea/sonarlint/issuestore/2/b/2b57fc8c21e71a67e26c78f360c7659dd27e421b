@@ -1,0 +1,17 @@
+
+a	java:S112É"FDefine and throw a dedicated exception instead of using a generic one.(”ª¿Üøÿÿÿÿ
+a	java:S112ç"FDefine and throw a dedicated exception instead of using a generic one.(„«÷Þøÿÿÿÿ
+e
+java:S2095é"NUse try-with-resources or close this "FileOutputStream" in a "finally" clause.(ÍÚÀí
+V	java:S125	"<This block of commented-out lines of code should be removed.(ü”’óûÿÿÿÿ
+V	java:S125"<This block of commented-out lines of code should be removed.(Ë°ÏÚúÿÿÿÿ
+V	java:S125 "<This block of commented-out lines of code should be removed.(ÁñÀÇÿÿÿÿÿ
+V	java:S125:"<This block of commented-out lines of code should be removed.(ãÎ‡µùÿÿÿÿ
+V	java:S125O"<This block of commented-out lines of code should be removed.(‘õØÉÿÿÿÿÿ
+V	java:S125Y"<This block of commented-out lines of code should be removed.(¦§Ñ•úÿÿÿÿ
+Q	java:S125\"<This block of commented-out lines of code should be removed.(ßÓ˜‡
+Q	java:S125r"<This block of commented-out lines of code should be removed.(òŒÌÃ
+R	java:S125 "<This block of commented-out lines of code should be removed.(º•“
+R	java:S125Õ"<This block of commented-out lines of code should be removed.(¿«œÙ
+ˆ
+java:S1130ß"lRemove the declaration of thrown exception 'java.io.IOException', as it cannot be thrown from method's body.(‡–’ëüÿÿÿÿ
