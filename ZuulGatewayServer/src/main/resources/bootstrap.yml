@@ -1,8 +1,29 @@
-#Application Name
 spring:
   application:
-    name: zuul-server     # This is the name for the remote configuration file
-  cloud:
-    config:
-      uri: http://localhost:8888  #where the config-service is running
-      fail-fast: true             #the service will not run if it can't reach the config-service
+    name: server-zuul
+
+  server:
+    port: 8080
+
+# Zuul routes.
+# Here for /login path, we are routing to localhost:8081
+# Here for /product path, we are routing to localhost:8082
+# Here for /customer path, we are routing to localhost:8083 
+zuul:
+  routes:
+    product-service:
+      url: http://localhost:8082/product
+      path: /product/**
+      service-id: product-service
+
+    customer-service:
+      url: http://localhost:8083/customer
+      path: /customer/**
+      service-id: customer-service
+
+      # Disable accessing services using service name (i.e. gallery-service).
+      # They should be only accessed through the path defined below.
+      # Link: https://stackoverflow.com/questions/46317388/zuul-service-name-exposed-instead-of-route-path-only
+      ignored-services: '*'
+      ignoreSecurityHeaders: false
+      sensitiveHeaders: Cookie,Set-Cookie
